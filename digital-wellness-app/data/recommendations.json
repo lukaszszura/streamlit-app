@@ -1,0 +1,88 @@
+[
+  {
+    "cluster": "Balanced Usage Group (Teen)",
+    "description": "Teens with moderate screen time and better sleep habits",
+    "percentage": 49.2,
+    "avg_sleep": 6.8,
+    "avg_screen_before_bed": 0.9,
+    "avg_social_media": 2.1,
+    "risk_level": "Low-Moderate",
+    "recommendations": [
+      "Keep up your healthy digital habits!",
+      "Try phone-free dinners with family",
+      "Set a consistent bedtime routine",
+      "Use your phone's built-in screen time controls",
+      "Try a weekly digital detox challenge"
+    ],
+    "sleep_tips": [
+      "Charge your phone outside the bedroom",
+      "Read a book before bed instead of scrolling",
+      "Keep consistent sleep and wake times"
+    ]
+  },
+  {
+    "cluster": "Higher Usage Group (Teen)",
+    "description": "Teens with increased screen time affecting sleep",
+    "percentage": 50.8,
+    "avg_sleep": 5.9,
+    "avg_screen_before_bed": 1.3,
+    "avg_social_media": 3.2,
+    "risk_level": "Moderate-High",
+    "recommendations": [
+      "Reduce screen time by 1-2 hours daily",
+      "Stop social media use 2 hours before bed",
+      "Use app timers for TikTok, Instagram, Snapchat",
+      "Create a phone charging station outside bedroom",
+      "Find evening activities that don't involve screens"
+    ],
+    "sleep_tips": [
+      "Set phone to 'Do Not Disturb' at 9 PM",
+      "Try relaxing music or podcasts instead of videos",
+      "Use blue light filters after sunset",
+      "Practice deep breathing or meditation"
+    ]
+  },
+  {
+    "cluster": "Regular Users (Social Media)",
+    "description": "Typical social media usage patterns",
+    "percentage": 99.2,
+    "avg_sleep": 4.2,
+    "avg_screen_time": 9.1,
+    "avg_social_media": 8.9,
+    "risk_level": "Moderate",
+    "recommendations": [
+      "Gradually reduce evening social media use",
+      "Set specific times for checking social platforms",
+      "Use focus modes during work/study time",
+      "Replace late-night scrolling with relaxing activities",
+      "Monitor your usage with built-in screen time tools"
+    ],
+    "sleep_tips": [
+      "Aim for 7-8 hours of sleep nightly",
+      "Create a wind-down routine without screens",
+      "Keep bedroom cool and dark for better sleep"
+    ]
+  },
+  {
+    "cluster": "High-Risk Users (Social Media)",
+    "description": "Extreme usage patterns requiring immediate intervention",
+    "percentage": 0.8,
+    "avg_sleep": 3.1,
+    "avg_screen_time": 12.5,
+    "avg_social_media": 11.8,
+    "risk_level": "Very High",
+    "recommendations": [
+      "Consider a 24-48 hour digital detox",
+      "Remove social media apps from phone temporarily",
+      "Seek support from friends, family, or counselor",
+      "Use app blocking software with strict limits",
+      "Establish structured daily routines without devices"
+    ],
+    "sleep_tips": [
+      "Prioritize sleep as essential for mental health",
+      "Use traditional alarm clock, not phone",
+      "Create multiple phone-free zones in your home",
+      "Consider professional help if sleep problems persist"
+    ]
+  }
+]

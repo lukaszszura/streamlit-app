@@ -1,0 +1,7 @@
+Algorithm,Dataset,Silhouette_Score,Davies_Bouldin_Score,Quality_Rating,User_Distribution,Best_For
+K-Means,Teen,0.152,2.263,Acceptable,49.2% / 50.8%,General teen population
+K-Means,Social Media,0.207,1.913,Acceptable,99.2% / 0.8%,Basic social media users
+DBSCAN,Teen,N/A,N/A,Not Suitable,Single Cluster,Not recommended
+DBSCAN,Social Media,0.732,0.319,Excellent,99.2% / 0.8%,Outlier detection
+Hierarchical,Teen,0.091,2.786,Marginal,49.2% / 50.8%,Limited effectiveness
+Hierarchical,Social Media,0.775,0.338,Excellent,99.2% / 0.8%,Best overall performance

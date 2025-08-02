@@ -1,0 +1,40 @@
+{
+  "models_directory": "models",
+  "data_directory": "data",
+  "required_files": {
+    "models": [
+      "teen_kmeans_model.pkl",
+      "social_hierarchical_model.pkl"
+    ],
+    "data_files": [
+      "teen_processed.csv",
+      "social_processed.csv",
+      "teen_clusters.csv",
+      "social_clusters.csv",
+      "recommendations.json",
+      "algorithm_performance.csv",
+      "model_metrics.json"
+    ]
+  },
+  "feature_mappings": {
+    "teen_features": [
+      "Sleep_Hours",
+      "Time_on_Social_Media",
+      "Screen_Time_Before_Bed"
+    ],
+    "social_features": [
+      " Sleep Duration ",
+      "Social Media Usage (hrs)",
+      "Screen.Time(hrs)",
+      "Exercise Time (hrs)"
+    ]
+  },
+  "cluster_interpretations": {
+    "teen_dataset": "Balanced user groups with general recommendations",
+    "social_dataset": "99% regular users, 1% outliers requiring specialized intervention"
+  },
+  "best_algorithms": {
+    "teen": "K-Means (Silhouette: 0.152)",
+    "social": "Hierarchical (Silhouette: 0.775)"
+  }
+}
