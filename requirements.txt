@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# Updated for Python 3.13 compatibility
-=======
->>>>>>> d9dd2923422e8f701c441740356321ff02adf06b
 streamlit>=1.28.0
 pandas>=2.1.0
 numpy>=1.25.0
