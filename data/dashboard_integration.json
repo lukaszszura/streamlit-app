@@ -1,40 +1,41 @@
 {
-  "models_directory": "models",
-  "data_directory": "data",
-  "required_files": {
-    "models": [
-      "teen_kmeans_model.pkl",
-      "social_hierarchical_model.pkl"
-    ],
-    "data_files": [
-      "teen_processed.csv",
-      "social_processed.csv",
-      "teen_clusters.csv",
-      "social_clusters.csv",
-      "recommendations.json",
-      "algorithm_performance.csv",
-      "model_metrics.json"
-    ]
+  "data_files": {
+    "teen_processed.csv": "Main teen dataset with cluster labels",
+    "social_processed.csv": "Main social media dataset with cluster labels",
+    "teen_clusters.csv": "Teen cluster distribution statistics",
+    "social_clusters.csv": "Social cluster distribution statistics",
+    "algorithm_performance.csv": "Performance comparison of all algorithms",
+    "recommendations.json": "Personalized recommendations for each user group",
+    "model_metrics.json": "Comprehensive model performance metrics"
   },
-  "feature_mappings": {
-    "teen_features": [
+  "model_files": {
+    "teen_kmeans_model.pkl": "Trained K-Means model for teen classification",
+    "teen_scaler.pkl": "StandardScaler for teen data preprocessing",
+    "social_hierarchical_model.pkl": "Trained Hierarchical model for social media users",
+    "social_scaler.pkl": "StandardScaler for social media data preprocessing"
+  },
+  "column_mappings": {
+    "teen_dataset": [
       "Sleep_Hours",
+      "Screen_Time_Before_Bed",
       "Time_on_Social_Media",
-      "Screen_Time_Before_Bed"
+      "Daily_Usage_Hours",
+      "Age",
+      "cluster"
     ],
-    "social_features": [
+    "social_dataset": [
       " Sleep Duration ",
       "Social Media Usage (hrs)",
       "Screen.Time(hrs)",
-      "Exercise Time (hrs)"
+      "Exercise Time (hrs)",
+      "Age",
+      "cluster"
     ]
   },
-  "cluster_interpretations": {
-    "teen_dataset": "Balanced user groups with general recommendations",
-    "social_dataset": "99% regular users, 1% outliers requiring specialized intervention"
-  },
-  "best_algorithms": {
-    "teen": "K-Means (Silhouette: 0.152)",
-    "social": "Hierarchical (Silhouette: 0.775)"
+  "usage_instructions": {
+    "app_startup": "App automatically loads all data files on startup",
+    "model_loading": "Models are loaded for real-time user classification",
+    "testing": "Tests verify data consistency and app functionality",
+    "data_updates": "Re-run this notebook cell to update all components"
   }
 }

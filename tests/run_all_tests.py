@@ -16,11 +16,6 @@ def run_all_tests():
     
     start_time = time.time()
     
-    print("DIGITAL WELLNESS DASHBOARD - TESTING")
-    print("=" * 50)
-    print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print()
-    
     # Import test modules
     try:
         from test_unit import run_all_unit_tests
@@ -42,25 +37,24 @@ def run_all_tests():
     results = []
     passed = 0
     
-    # Run each test
+    # Run each test (silently)
     for test in tests:
-        print(f"Running {test['name']}...")
-        print("-" * 30)
-        
         try:
-            result = test["function"]()
+            # Suppress output by redirecting stdout temporarily
+            import io
+            import contextlib
+            
+            f = io.StringIO()
+            with contextlib.redirect_stdout(f):
+                result = test["function"]()
+            
             if result:
-                print(f"✅ PASSED - {test['name']}")
                 passed += 1
                 results.append({"name": test["name"], "status": "PASSED", "count": test["count"]})
             else:
-                print(f"❌ FAILED - {test['name']}")
                 results.append({"name": test["name"], "status": "FAILED", "count": 0})
-        except Exception as e:
-            print(f"❌ ERROR - {test['name']}: {e}")
+        except:
             results.append({"name": test["name"], "status": "ERROR", "count": 0})
-        
-        print()
     
     end_time = time.time()
     total_time = end_time - start_time
@@ -114,15 +108,10 @@ def run_all_tests():
     # FINAL STATUS
     if passed == len(tests):
         print("🎉 ALL TESTS PASSED!")
-        print("   Project is ready for submission")
+        
     else:
         print(f"⚠️  {passed}/{len(tests)} TEST CATEGORIES PASSED")
         print("   Some tests need attention")
-    
-    print()
-    print("=" * 50)
-    print("End of Test Report")
-    print("=" * 50)
     
     return passed == len(tests)
 

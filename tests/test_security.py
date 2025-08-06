@@ -10,7 +10,7 @@ def test_file_safety():
     """Check if files are safe to use"""
     print("Testing file safety...")
     
-    files = ["../data/teen_processed.csv", "../data/social_processed.csv"]
+    files = ["data/teen_processed.csv", "data/social_processed.csv"]
     
     for file_path in files:
         # Check file exists
@@ -26,7 +26,7 @@ def test_data_values():
     """Check data values are reasonable"""
     print("Testing data values...")
     
-    teen_data = pd.read_csv("../data/teen_processed.csv")
+    teen_data = pd.read_csv("data/teen_processed.csv")
     
     if 'Daily_Usage_Hours' in teen_data.columns:
         usage = teen_data['Daily_Usage_Hours']
@@ -44,7 +44,7 @@ def test_age_values():
     """Check age values make sense"""
     print("Testing age values...")
     
-    teen_data = pd.read_csv("../data/teen_processed.csv")
+    teen_data = pd.read_csv("data/teen_processed.csv")
     
     if 'Age' in teen_data.columns:
         ages = teen_data['Age']
@@ -71,4 +71,7 @@ def run_all_security_tests():
         return False
 
 if __name__ == '__main__':
-    run_all_security_tests()
+    print("Running security tests...")
+    success = run_all_security_tests()
+    if not success:
+        exit(1)

@@ -1,7 +1,6 @@
 """
-Digital Wellness Dashboard - Clustering-Based Recommendations
+Digital Wellness Dashboard Clustering-Based Recommendations
 Reduce Late Night Social Media Usage and Improve Sleep Quality
-Based on analysis of 7,299 users using machine learning clustering
 """
 
 import streamlit as st
@@ -21,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for dark theme and horizontal navigation
+# CSS
 st.markdown("""
 <style>
     /* Force dark theme on everything */
@@ -396,13 +395,11 @@ def load_data():
         teen_df = pd.read_csv("data/teen_processed.csv")
         social_df = pd.read_csv("data/social_processed.csv")
         
-        # Load cluster results
+        # Load cluster results (for reference - data already has cluster assignments)
         teen_clusters = pd.read_csv("data/teen_clusters.csv")
         social_clusters = pd.read_csv("data/social_clusters.csv")
         
-        # Add cluster labels to datasets
-        teen_df['cluster'] = teen_clusters['cluster']
-        social_df['cluster'] = social_clusters['cluster']
+        # Note: teen_df and social_df already contain correct cluster assignments
         
         # Load recommendations
         with open("data/recommendations.json", 'r') as f:
@@ -424,7 +421,7 @@ st.markdown('<p style="text-align: center; color: #888;">Based on machine learni
 # Horizontal Navigation
 st.markdown("---")
 
-# Initialize page in session state if not exists
+# Initialize page 
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "🏠 Overview & Analytics"
 
@@ -589,38 +586,89 @@ if page == "🏠 Overview & Analytics":
         st.plotly_chart(fig_bedtime, use_container_width=True)
     
     # Late night usage patterns
-    st.subheader("🌙 Late Night Usage Patterns")
+    st.subheader("🌙 Real User Behavior Analysis")
     
-    # Create synthetic hourly data for demonstration
-    hours = list(range(24))
-    balanced_usage = [2, 1, 0, 0, 0, 0, 1, 3, 5, 6, 7, 8, 9, 8, 7, 8, 9, 10, 12, 15, 18, 12, 8, 4]
-    higher_usage = [8, 6, 3, 1, 0, 0, 2, 4, 6, 8, 9, 10, 11, 10, 9, 11, 13, 15, 18, 22, 25, 20, 15, 12]
+    # Analyze actual bedtime screen usage from our real data
+    teen_bedtime_by_cluster = teen_df.groupby('cluster')['Screen_Time_Before_Bed'].agg(['mean', 'std', 'count']).reset_index()
+    teen_bedtime_by_cluster['Group'] = teen_bedtime_by_cluster['cluster'].map({0: 'Balanced Usage', 1: 'Higher Usage'})
     
-    usage_df = pd.DataFrame({
-        'Hour': hours + hours,
-        'Usage_Level': balanced_usage + higher_usage,
-        'Group': ['Balanced Usage'] * 24 + ['Higher Usage'] * 24
-    })
-    
-    fig_hourly = px.line(
-        usage_df,
-        x='Hour',
-        y='Usage_Level',
-        color='Group',
-        title="Social Media Usage Throughout the Day",
-        labels={'Hour': 'Hour of Day', 'Usage_Level': 'Usage Intensity'},
-        color_discrete_map={'Balanced Usage': '#2E8B57', 'Higher Usage': '#FF6347'}
+    # Create distribution plot of actual bedtime screen time
+    fig_bedtime_dist = px.histogram(
+        teen_df,
+        x='Screen_Time_Before_Bed',
+        color='cluster',
+        title="Hours of Screen Time Before Bed",
+        labels={'Screen_Time_Before_Bed': 'Hours Before Bed', 'count': 'Number of Users'},
+        color_discrete_map={0: '#2E8B57', 1: '#FF6347'},
+        nbins=30,
+        opacity=0.7
     )
+    
+    # Add vertical lines for group averages
+    balanced_avg = teen_df[teen_df['cluster'] == 0]['Screen_Time_Before_Bed'].mean()
+    higher_avg = teen_df[teen_df['cluster'] == 1]['Screen_Time_Before_Bed'].mean()
+    
+    fig_bedtime_dist.add_vline(
+        x=balanced_avg, 
+        line_dash="dash", 
+        line_color="#2E8B57",
+        annotation_text=f"Balanced Avg: {balanced_avg:.1f}h"
+    )
+    fig_bedtime_dist.add_vline(
+        x=higher_avg, 
+        line_dash="dash", 
+        line_color="#FF6347",
+        annotation_text=f"Higher Usage Avg: {higher_avg:.1f}h"
+    )
+    
+    fig_hourly = fig_bedtime_dist
     
     # Add bedtime zone
     fig_hourly.add_vrect(
-        x0=22, x1=24,
+        x0=2, x1=3,
         fillcolor="red", opacity=0.2,
         line_width=0,
-        annotation_text="Late Night Risk Zone"
+        annotation_text="Critical Sleep Impact Zone"
+    )
+    
+    fig_hourly.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font_color='white'
     )
     
     st.plotly_chart(fig_hourly, use_container_width=True)
+    
+    # Add actual data insights below the chart
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="metric-box">
+            <h3>Balanced Group</h3>
+            <h2>{balanced_avg:.1f}h</h2>
+            <p>Avg bedtime screen time</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div class="metric-box">
+            <h3>Higher Usage Group</h3>
+            <h2>{higher_avg:.1f}h</h2>
+            <p>Avg bedtime screen time</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        difference = higher_avg - balanced_avg
+        st.markdown(f"""
+        <div class="metric-box">
+            <h3>Difference</h3>
+            <h2>+{difference:.1f}h</h2>
+            <p>Higher usage impact</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ASSESSMENT PAGE
 elif page == "🔍 Take Assessment":
@@ -635,7 +683,7 @@ elif page == "🔍 Take Assessment":
         with col1:
             age = st.selectbox(
                 "Your age group:",
-                ["13-15 (Early Teen)", "16-18 (Late Teen)", "19-22 (Young Adult)", "23-27 (Adult)", "28-35 (Young Professional)", "36-45 (Mid-Career)", "46+ (Mature Adult)"],
+                ["13-15 (Early Teen)", "16-18 (Late Teen)", "19-22 (Young Adult)", "23-27 (Adult)", "27+ (Adult)"],
                 help="This helps us use the right model for your age group"
             )
             
