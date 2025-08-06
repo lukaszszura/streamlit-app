@@ -467,7 +467,7 @@ if page == "🏠 Overview & Analytics":
         <div class="metric-box">
             <h3>👥 Total Users</h3>
             <h2>7,299</h2>
-            <p>Real user data analyzed</p>
+            <p>User data analyzed</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -586,7 +586,7 @@ if page == "🏠 Overview & Analytics":
         st.plotly_chart(fig_bedtime, use_container_width=True)
     
     # Late night usage patterns
-    st.subheader("🌙 Real User Behavior Analysis")
+    st.subheader("🌙 User Behavior Analysis")
     
     # Analyze actual bedtime screen usage from our real data
     teen_bedtime_by_cluster = teen_df.groupby('cluster')['Screen_Time_Before_Bed'].agg(['mean', 'std', 'count']).reset_index()
@@ -1019,21 +1019,82 @@ elif page == "💡 Get Recommendations":
     if 'assessment_results' in st.session_state:
         results = st.session_state.assessment_results
         
-        # Find matching recommendations
+        # Find matching recommendations based on dataset and user group
         user_group = results['user_group']
+        dataset_used = results['dataset_used']
         matching_rec = None
         
-        for rec in recommendations:
-            if user_group.lower() in rec['cluster'].lower():
-                matching_rec = rec
-                break
+        # Map user groups to recommendation structure
+        if dataset_used == "Teen":
+            if "Balanced" in user_group:
+                matching_rec = {
+                    'cluster': 'Balanced Usage Group',
+                    'recommendations': recommendations['teen_dataset']['cluster_0']['recommendations'],
+                    'sleep_tips': [
+                        "Set a consistent bedtime (even on weekends)",
+                        "Stop all screens 1 hour before sleep",
+                        "Keep bedroom cool, dark, and quiet",
+                        "Try reading or meditation before bed",
+                        "Avoid caffeine after 2 PM"
+                    ]
+                }
+            else:  # Higher Usage Group
+                matching_rec = {
+                    'cluster': 'Higher Usage Group',
+                    'recommendations': recommendations['teen_dataset']['cluster_1']['recommendations'],
+                    'sleep_tips': [
+                        "Urgently reduce screen time before bed",
+                        "Move all devices out of bedroom",
+                        "Set phone to 'Do Not Disturb' at 9 PM",
+                        "Practice relaxation techniques",
+                        "Consider sleep hygiene consultation"
+                    ]
+                }
+        else:  # Social Media Dataset
+            if "Regular" in user_group:
+                matching_rec = {
+                    'cluster': 'Regular Users',
+                    'recommendations': recommendations['social_dataset']['cluster_0']['recommendations'],
+                    'sleep_tips': [
+                        "Maintain current healthy patterns",
+                        "Use blue light filters after sunset",
+                        "Keep consistent sleep schedule",
+                        "Monitor for any pattern changes",
+                        "Share tips with friends and family"
+                    ]
+                }
+            else:  # High-Risk Users
+                matching_rec = {
+                    'cluster': 'High-Risk Users',
+                    'recommendations': recommendations['social_dataset']['cluster_1']['recommendations'],
+                    'sleep_tips': [
+                        "Immediate intervention needed",
+                        "Consider professional help",
+                        "Remove all devices from bedroom",
+                        "Set strict usage limits",
+                        "Practice digital detox"
+                    ]
+                }
         
         if matching_rec is None:
-            # Fallback based on risk level
-            if "High" in results['risk_level']:
-                matching_rec = recommendations[-1]  # High-risk recommendations
-            else:
-                matching_rec = recommendations[0]   # Balanced recommendations
+            # Fallback recommendations
+            matching_rec = {
+                'cluster': 'General',
+                'recommendations': [
+                    "Limit screen time before bed",
+                    "Practice good sleep hygiene",
+                    "Set device boundaries",
+                    "Take regular digital breaks",
+                    "Stay physically active"
+                ],
+                'sleep_tips': [
+                    "Maintain consistent sleep schedule",
+                    "Create a relaxing bedtime routine",
+                    "Keep bedroom cool and dark",
+                    "Avoid caffeine late in the day",
+                    "Exercise regularly but not before bed"
+                ]
+            }
         
         # Assessment Summary Cards
         st.markdown("---")
@@ -1618,10 +1679,10 @@ elif page == "📊 Research Results":
             margin-bottom: 1rem;
         ">
             <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
-            <h3 style="color: #28a745 !important; margin-bottom: 0.5rem; font-size: 1.2rem;">Real People Data</h3>
+            <h3 style="color: #28a745 !important; margin-bottom: 0.5rem; font-size: 1.2rem;">Research Data</h3>
             <h2 style="color: #ffffff !important; margin-bottom: 0.5rem; font-size: 1.5rem;">7,299 Users</h2>
             <p style="color: #a0a0a0 !important; font-size: 0.9rem;">
-                Your assessment is based on patterns from thousands of real users, not theoretical models
+                Your assessment is based on patterns from thousands of users, not theoretical models
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1729,7 +1790,7 @@ elif page == "📊 Research Results":
             x='Social Media Hours',
             y='Sleep Hours',
             color='Group',
-            title="Real User Groups from Your Research Data",
+            title="User Groups from Research Data",
             color_discrete_sequence=['#2E8B57', '#FF6347', '#4169E1', '#DC143C'],
             opacity=0.7
         )
@@ -1743,7 +1804,7 @@ elif page == "📊 Research Results":
         )
         fig_clusters.add_annotation(
             x=7, y=6.5,
-            text="Your assessment uses<br>this real data pattern",
+            text="Your assessment uses<br>this data pattern",
             showarrow=True,
             arrowhead=2,
             bgcolor="rgba(0, 212, 255, 0.8)",
@@ -1843,7 +1904,7 @@ elif page == "📊 Research Results":
             risk_data,
             values='Percentage',
             names='Risk Level',
-            title="Real Digital Wellness Risk Distribution from Your Research",
+            title="Digital Wellness Risk Distribution from Research",
             color_discrete_sequence=['#28a745', '#ffc107', '#dc3545']
         )
         fig_risk.update_traces(
@@ -1888,7 +1949,7 @@ elif page == "📊 Research Results":
             x='Daily Screen Time (hours)',
             y='Sleep Hours',
             color='Risk Level',
-            title="Real Screen Time vs Sleep Data from Your Research",
+            title="Screen Time vs Sleep Data from Research",
             color_discrete_map={'Low': '#28a745', 'Moderate': '#ffc107', 'High': '#dc3545'},
             opacity=0.6
         )
@@ -2003,7 +2064,7 @@ elif page == "📊 Research Results":
             age_patterns,
             x='Dataset',
             y=['Avg Screen Time', 'Avg Sleep Hours'],
-            title="Real Digital Habits: Teen vs Young Adult Users",
+            title="Digital Habits: Teen vs Young Adult Users",
             barmode='group',
             color_discrete_sequence=['#FF6347', '#4169E1']
         )
@@ -2037,7 +2098,7 @@ elif page == "📊 Research Results":
             x='Dataset',
             y='Percentage',
             color='User Type',
-            title="Real Clustering Results from Your Research",
+            title="Clustering Results from Research",
             color_discrete_sequence=['#28a745', '#dc3545']
         )
         fig_clusters.update_layout(
