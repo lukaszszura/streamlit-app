@@ -1,7 +1,6 @@
-Algorithm,Dataset,Silhouette_Score,Davies_Bouldin_Score,Best_Model
-K-Means,Teen,0.15226651683183576,2.26293706278667,True
-DBSCAN,Teen,0.623,1.2,False
-Hierarchical,Teen,0.0912926750356666,2.785890732655001,False
-K-Means,Social Media,0.20262978885080088,1.9327323103842264,False
-DBSCAN,Social Media,0.589,1.5,False
-Hierarchical,Social Media,0.7754131698145884,0.3375215801792949,True
+Algorithm,Silhouette_Score,Davies_Bouldin_Index
+Teen K-Means,0.152,2.263
+Teen Hier,0.091,2.786
+Social K-Means,0.207,1.913
+Social Hier,0.775,0.338
+Social DBSCAN,0.732,0.319

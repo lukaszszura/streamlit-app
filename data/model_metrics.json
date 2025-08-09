@@ -1,38 +1,4 @@
 {
-  "teen_dataset": {
-    "original_size": 3000,
-    "final_size": 3000,
-    "best_algorithm": "K-Means",
-    "best_silhouette_score": 0.15226651683183576,
-    "best_davies_bouldin_score": 2.26293706278667,
-    "cluster_distribution": {
-      "cluster_0": 1522,
-      "cluster_1": 1478
-    },
-    "cluster_percentages": {
-      "cluster_0": 50.73333333333333,
-      "cluster_1": 49.266666666666666
-    }
-  },
-  "social_dataset": {
-    "original_size": 5050,
-    "final_size": 4299,
-    "best_algorithm": "Hierarchical",
-    "best_silhouette_score": 0.7754131698145884,
-    "best_davies_bouldin_score": 0.3375215801792949,
-    "cluster_distribution": {
-      "cluster_0": 4263,
-      "cluster_1": 36
-    },
-    "cluster_percentages": {
-      "cluster_0": 99.16259595254711,
-      "cluster_1": 0.8374040474528961
-    }
-  },
-  "project_info": {
-    "total_users": 7299,
-    "algorithms_tested": 3,
-    "best_overall_score": 0.7754131698145884,
-    "export_timestamp": "2025-08-06T15:56:42.615509"
-  }
+  "teen_silhouette": 0.152,
+  "social_silhouette": 0.775
 }

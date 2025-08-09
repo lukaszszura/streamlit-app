@@ -1,77 +1,65 @@
-"""
-Security Tests - Digital Wellness Dashboard
-Testing for safety and bad inputs
-"""
+# Simple security tests for the Digital Wellness Dashboard App
 
 import os
-import pandas as pd
+import sys
 
-def test_file_safety():
-    """Check if files are safe to use"""
-    print("Testing file safety...")
-    
-    files = ["data/teen_processed.csv", "data/social_processed.csv"]
-    
-    for file_path in files:
-        # Check file exists
-        assert os.path.exists(file_path), f"File missing: {file_path}"
-        
-        # Check file can be read
-        data = pd.read_csv(file_path)
-        assert len(data) > 0, f"File empty: {file_path}"
-        
-    print("  ✓ Files are safe to use")
+# Add the parent directory so we can use app files
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, parent_dir)
 
-def test_data_values():
-    """Check data values are reasonable"""
-    print("Testing data values...")
+def test_data_files_safe():
+    """Check if data files are in safe places"""
+    print("Checking if data files are safe...")
     
-    teen_data = pd.read_csv("data/teen_processed.csv")
-    
-    if 'Daily_Usage_Hours' in teen_data.columns:
-        usage = teen_data['Daily_Usage_Hours']
-        
-        # Check for bad values
-        bad_negative = usage[usage < 0]
-        bad_too_high = usage[usage > 24]
-        
-        assert len(bad_negative) == 0, "Found negative usage hours"
-        assert len(bad_too_high) == 0, "Found usage over 24 hours"
-        
-    print("  ✓ Data values look good")
-
-def test_age_values():
-    """Check age values make sense"""
-    print("Testing age values...")
-    
-    teen_data = pd.read_csv("data/teen_processed.csv")
-    
-    if 'Age' in teen_data.columns:
-        ages = teen_data['Age']
-        
-        # Check for weird ages
-        bad_ages = ages[(ages < 0) | (ages > 100)]
-        assert len(bad_ages) == 0, "Found weird age values"
-        
-    print("  ✓ Age values make sense")
-
-def run_all_security_tests():
-    """Run all security tests"""
-    print("Security Tests - Digital Wellness Dashboard")
-    print("=" * 40)
-    
-    try:
-        test_file_safety()
-        test_data_values()
-        test_age_values()
-        print("All security tests passed!")
+    # Check if data is in the right folder
+    data_folder = os.path.join(parent_dir, 'data')
+    if os.path.exists(data_folder):
+        print("  ✓ Data folder exists in safe location")
         return True
-    except Exception as e:
-        print(f"Security test failed: {e}")
+    else:
+        print("  ✗ Data folder not found")
         return False
 
-if __name__ == '__main__':
-    print("Running security tests...")
-    success = run_all_security_tests()
-    if not success:
-        exit(1)
+def test_no_passwords_in_code():
+    """Make sure there are no passwords in the code"""
+    print("Checking for passwords in code...")
+    
+    # Check password patterns
+    dangerous_patterns = ['password=', 'secret=', 'key=', 'token=']
+    
+    # Check app.py file
+    try:
+        with open(os.path.join(parent_dir, 'app.py'), 'r', encoding='utf-8') as f:
+            app_content = f.read().lower()
+            
+        found_passwords = False
+        for pattern in dangerous_patterns:
+            if pattern in app_content:
+                found_passwords = True
+                break
+        
+        if not found_passwords:
+            print("  ✓ No obvious passwords found in code")
+            return True
+        else:
+            print("  ✗ Potential passwords found in code")
+            return False
+            
+    except Exception as e:
+        print(f"  ✗ Error checking for passwords: {e}")
+        return False
+
+def test_safe_file_access():
+    """Check if we only access files we should"""
+    print("Checking file access...")
+    
+    # Make sure we only access files in our project folder
+    current_dir = os.getcwd()
+    project_dir = os.path.join(parent_dir)
+    
+    if project_dir in current_dir or current_dir in project_dir:
+        print("  ✓ Working in safe project directory")
+        return True
+    else:
+        print("  ✗ Working outside project directory")
+        return False

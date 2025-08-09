@@ -395,12 +395,11 @@ def load_data():
         teen_df = pd.read_csv("data/teen_processed.csv")
         social_df = pd.read_csv("data/social_processed.csv")
         
-        # Load cluster results (for reference - data already has cluster assignments)
+        # Load cluster results 
         teen_clusters = pd.read_csv("data/teen_clusters.csv")
         social_clusters = pd.read_csv("data/social_clusters.csv")
         
-        # Note: teen_df and social_df already contain correct cluster assignments
-        
+                
         # Load recommendations
         with open("data/recommendations.json", 'r') as f:
             recommendations = json.load(f)
@@ -509,13 +508,26 @@ if page == "🏠 Overview & Analytics":
         
         # Teen cluster distribution
         teen_cluster_counts = teen_df['cluster'].value_counts().sort_index()
-        fig_teen = px.pie(
-            values=teen_cluster_counts.values,
-            names=['Balanced Usage Group', 'Higher Usage Group'],
+        fig_teen = px.bar(
+            x=[0, 1],
+            y=teen_cluster_counts.values,
             title="Teen User Groups",
+            color=[0, 1],
             color_discrete_sequence=['#2E8B57', '#FF6347']
         )
-        fig_teen.update_layout(height=400)
+        fig_teen.update_layout(
+            height=400,
+            showlegend=False,
+            xaxis_title="",
+            yaxis_title="Number of Users",
+            margin=dict(l=50, r=50, t=50, b=50),
+            xaxis=dict(showticklabels=False)
+        )
+        fig_teen.update_traces(texttemplate='%{y}', textposition='inside', textfont=dict(color='white', size=16))
+        
+        # Add text annotations for labels
+        fig_teen.add_annotation(x=0, y=-200, text="Balanced Usage", showarrow=False, font=dict(size=12))
+        fig_teen.add_annotation(x=1, y=-200, text="Higher Usage", showarrow=False, font=dict(size=12))
         st.plotly_chart(fig_teen, use_container_width=True)
         
         # Teen statistics
@@ -531,13 +543,22 @@ if page == "🏠 Overview & Analytics":
         
         # Social cluster distribution  
         social_cluster_counts = social_df['cluster'].value_counts().sort_index()
-        fig_social = px.pie(
-            values=social_cluster_counts.values,
-            names=['Regular Users (99.2%)', 'High-Risk Users (0.8%)'],
+        fig_social = px.bar(
+            x=['Regular Users', 'High-Risk Users'],
+            y=social_cluster_counts.values,
             title="Social Media User Groups",
+            color=['Regular Users', 'High-Risk Users'],
             color_discrete_sequence=['#4169E1', '#DC143C']
         )
-        fig_social.update_layout(height=400)
+        fig_social.update_layout(
+            height=450,
+            showlegend=False,
+            xaxis_title="User Groups",
+            yaxis_title="Number of Users",
+            margin=dict(l=50, r=50, t=50, b=120),
+            xaxis=dict(tickangle=0, tickmode='array', tickvals=[0, 1], ticktext=['Regular<br>Users', 'High-Risk<br>Users'])
+        )
+        fig_social.update_traces(texttemplate='%{y}', textposition='inside', textfont=dict(color='white', size=16))
         st.plotly_chart(fig_social, use_container_width=True)
         
         # Social statistics
@@ -588,7 +609,7 @@ if page == "🏠 Overview & Analytics":
     # Late night usage patterns
     st.subheader("🌙 User Behavior Analysis")
     
-    # Analyze actual bedtime screen usage from our real data
+    # Analyze actual bedtime screen usage
     teen_bedtime_by_cluster = teen_df.groupby('cluster')['Screen_Time_Before_Bed'].agg(['mean', 'std', 'count']).reset_index()
     teen_bedtime_by_cluster['Group'] = teen_bedtime_by_cluster['cluster'].map({0: 'Balanced Usage', 1: 'Higher Usage'})
     
@@ -639,7 +660,7 @@ if page == "🏠 Overview & Analytics":
     
     st.plotly_chart(fig_hourly, use_container_width=True)
     
-    # Add actual data insights below the chart
+    # Add data insights below the chart
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -835,7 +856,7 @@ elif page == "🔍 Take Assessment":
                     risk_color = "warning"
                     cluster_info = "You're in the 99.2% with typical usage patterns"
             
-            # Display results with modern design
+            # Display results
             st.markdown("---")
             st.markdown("""
             <div style="text-align: center; margin: 2rem 0;">
@@ -848,11 +869,11 @@ elif page == "🔍 Take Assessment":
             </div>
             """, unsafe_allow_html=True)
             
-            # Main results cards - compact and equal size
+            # Main results cards
             col1, col2, col3 = st.columns([1, 1, 1], gap="medium")
             
             with col1:
-                # Risk level with color-coded styling
+                # Risk level with color
                 risk_icon = "🟢" if "Low" in risk_level else "🟡" if "Moderate" in risk_level else "🔴"
                 st.markdown(f"""
                 <div style="
@@ -970,7 +991,7 @@ elif page == "🔍 Take Assessment":
                         </div>
                         """, unsafe_allow_html=True)
             
-            # Call to action - gradient design
+            # Call to action
             st.markdown("---")
             st.markdown("""
             <div style="
@@ -1769,12 +1790,11 @@ elif page == "📊 Research Results":
         st.plotly_chart(fig_sizes, use_container_width=True)
     
     with col2:
-        # Real clustering visualization using actual project data
-        # Sample real data from your datasets for visualization
+        # Clustering visualization using actual project data
         teen_sample = teen_df.sample(300, random_state=42)
         social_sample = social_df.sample(300, random_state=42)
         
-        # Create clustering visualization with real data
+        # Create clustering visualization
         cluster_data = pd.DataFrame({
             'Social Media Hours': list(teen_sample['Time_on_Social_Media']) + list(social_sample['Social Media Usage (hrs)']),
             'Sleep Hours': list(teen_sample['Sleep_Hours']) + list(social_sample[' Sleep Duration ']),
@@ -1878,11 +1898,11 @@ elif page == "📊 Research Results":
     col1, col2 = st.columns(2, gap="large")
     
     with col1:
-        # Real risk level distribution from your project data
-        # Calculate actual risk distribution from your datasets
+        # Real risk level distribution
+       
         total_users = len(teen_df) + len(social_df)
         
-        # From your research: teens have 49.3% higher usage, social media has 0.8% high-risk
+        # From research: teens have 49.3% higher usage, social media has 0.8% high-risk
         teen_higher_risk = len(teen_df[teen_df['cluster'] == 1])  # 1478 users
         social_high_risk = len(social_df[social_df['cluster'] == 1])  # 36 users
         
@@ -1921,8 +1941,8 @@ elif page == "📊 Research Results":
         st.plotly_chart(fig_risk, use_container_width=True)
     
     with col2:
-        # Real Sleep vs Screen Time Correlation from your project data
-        # Combine both datasets for comprehensive correlation analysis
+        # Sleep vs Screen Time Correlation from your project data
+        
         combined_screen = list(teen_df['Daily_Usage_Hours']) + list(social_df['Screen.Time(hrs)'])
         combined_sleep = list(teen_df['Sleep_Hours']) + list(social_df[' Sleep Duration '])
         combined_dataset = ['Teen'] * len(teen_df) + ['Social Media'] * len(social_df)
@@ -1954,12 +1974,12 @@ elif page == "📊 Research Results":
             opacity=0.6
         )
         
-        # Calculate real correlation from your data
+        # Calculate real correlation
         screen_data = correlation_data['Daily Screen Time (hours)']
         sleep_data = correlation_data['Sleep Hours']
         correlation_coef = np.corrcoef(screen_data, sleep_data)[0, 1]
         
-        # Add trend line based on real data
+        # Add trend line
         z = np.polyfit(screen_data, sleep_data, 1)
         p = np.poly1d(z)
         x_trend = np.linspace(screen_data.min(), screen_data.max(), 100)
@@ -2048,11 +2068,11 @@ elif page == "📊 Research Results":
     </div>
     """, unsafe_allow_html=True)
     
-    # Age group comparison charts - USING REAL PROJECT DATA
+    # Age group comparison charts
     col1, col2 = st.columns(2, gap="large")
     
     with col1:
-        # Real age group usage patterns from actual datasets
+        # Real age group usage patterns
         age_patterns = pd.DataFrame({
             'Dataset': ['Teen Dataset\n(Ages 13-19)', 'Social Media Dataset\n(Ages 14-28+)'],
             'Avg Screen Time': [5.0, 10.8],
@@ -2086,7 +2106,7 @@ elif page == "📊 Research Results":
         st.plotly_chart(fig_age, use_container_width=True)
     
     with col2:
-        # Real cluster distribution from your research
+        # Real cluster distribution
         cluster_data = pd.DataFrame({
             'Dataset': ['Teen Dataset', 'Social Media Dataset'],
             'Balanced/Regular Users': [50.7, 99.2],
@@ -2347,7 +2367,7 @@ elif page == "📊 Research Results":
         <div style="color: #ffffff !important; font-size: 0.95rem; line-height: 1.6;">
             <p><strong>Original Dataset Limitations:</strong></p>
             <p>• Teen dataset: Comprehensive coverage (ages 13-18)</p>
-            <p>• Social media dataset: Originally focused on younger demographics (15-35)</p>
+            <p>• Social media dataset: Originally focused on younger demographics (14-28)</p>
             <p>• Assessment expanded: Now includes professional and mature adults (35+)</p>
             <br>
             <p><strong>How we address this:</strong></p>
