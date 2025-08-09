@@ -663,12 +663,16 @@ if page == "🏠 Overview & Analytics":
     # Add data insights below the chart
     col1, col2, col3 = st.columns(3)
     
+    # Calculate daily usage averages (the actual differentiator)
+    balanced_daily = teen_df[teen_df['cluster'] == 0]['Daily_Usage_Hours'].mean()
+    higher_daily = teen_df[teen_df['cluster'] == 1]['Daily_Usage_Hours'].mean()
+    
     with col1:
         st.markdown(f"""
         <div class="metric-box">
             <h3>Balanced Group</h3>
-            <h2>{balanced_avg:.1f}h</h2>
-            <p>Avg bedtime screen time</p>
+            <h2>{balanced_daily:.1f}h</h2>
+            <p>Avg daily screen time</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -676,13 +680,13 @@ if page == "🏠 Overview & Analytics":
         st.markdown(f"""
         <div class="metric-box">
             <h3>Higher Usage Group</h3>
-            <h2>{higher_avg:.1f}h</h2>
-            <p>Avg bedtime screen time</p>
+            <h2>{higher_daily:.1f}h</h2>
+            <p>Avg daily screen time</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
-        difference = higher_avg - balanced_avg
+        difference = higher_daily - balanced_daily
         st.markdown(f"""
         <div class="metric-box">
             <h3>Difference</h3>
