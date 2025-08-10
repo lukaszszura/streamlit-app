@@ -11,10 +11,17 @@ import plotly.graph_objects as go
 import json
 import os
 import pickle
+import joblib
+import warnings
 from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
+
+# Suppress sklearn version warnings and feature name warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='sklearn')
+warnings.filterwarnings('ignore', message='.*InconsistentVersionWarning.*')
+warnings.filterwarnings('ignore', message='.*does not have valid feature names.*')
 
 # Page configuration
 st.set_page_config(
@@ -396,16 +403,12 @@ def load_models():
     """Load the trained clustering models and scalers"""
     try:
         # Load teen models
-        with open("models/teen_kmeans_model.pkl", 'rb') as f:
-            teen_model = pickle.load(f)
-        with open("models/teen_scaler.pkl", 'rb') as f:
-            teen_scaler = pickle.load(f)
+        teen_model = joblib.load("models/teen_kmeans_model.pkl")
+        teen_scaler = joblib.load("models/teen_scaler.pkl")
         
         # Load social media models  
-        with open("models/social_hierarchical_model.pkl", 'rb') as f:
-            social_model = pickle.load(f)
-        with open("models/social_scaler.pkl", 'rb') as f:
-            social_scaler = pickle.load(f)
+        social_model = joblib.load("models/social_hierarchical_model.pkl")
+        social_scaler = joblib.load("models/social_scaler.pkl")
             
         return teen_model, teen_scaler, social_model, social_scaler
     except Exception as e:
@@ -419,16 +422,13 @@ def predict_cluster(user_data, dataset_type, teen_model, teen_scaler, social_mod
         # If models are available, use them
         if teen_model is not None and social_model is not None:
             if dataset_type == "Teen":
-                # Prepare teen features: Daily_Usage_Hours, Sleep_Hours, Screen_Time_Before_Bed, 
-                # Phone_Checks_Per_Day, Time_on_Social_Media, Anxiety_Level, Depression_Level, Age
+                # Prepare teen features (5 features as trained): 
+                # Sleep_Hours, Screen_Time_Before_Bed, Time_on_Social_Media, Daily_Usage_Hours, Age
                 features = np.array([[
-                    user_data['daily_usage'],
-                    user_data['sleep_hours'], 
+                    user_data['sleep_hours'],
                     user_data['bedtime_screen'],
-                    user_data.get('phone_checks', 50),  # Default for missing data
                     user_data['social_media'],
-                    user_data.get('anxiety_level', 5),  # Default for missing data
-                    user_data.get('depression_level', 5),  # Default for missing data
+                    user_data['daily_usage'],
                     user_data.get('age_numeric', 16)  # Default teen age
                 ]])
                 
@@ -438,10 +438,12 @@ def predict_cluster(user_data, dataset_type, teen_model, teen_scaler, social_mod
                 confidence = 0.152  # Silhouette score from research
                 
             else:  # Social Media dataset
-                # Prepare social media features: Social_Media_Usage, Sleep_Duration, Exercise_Time, Age
+                # Prepare social media features (5 features as trained):
+                # Sleep Duration, Social Media Usage (hrs), Screen.Time(hrs), Exercise Time (hrs), Age
                 features = np.array([[
-                    user_data['social_media'],
                     user_data['sleep_hours'],
+                    user_data['social_media'],
+                    user_data['daily_usage'],  # Screen time mapping
                     user_data.get('exercise_time', 1.0),  # Default exercise time
                     user_data.get('age_numeric', 22)  # Default adult age
                 ]])
